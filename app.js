@@ -1,102 +1,100 @@
 document.addEventListener("DOMContentLoaded", function(event) { 
-
-    const myNamedLister = (data) => buildTable(data);
-    var table;
+    
+    var dataTable;
     var elementFounded;
 
     fetch('https://periodic-table-api.herokuapp.com/')
     .then(response => response.json())
     .then(res => {
-        table = res
+        dataTable = res;        
     });
 
     document.getElementById('name').addEventListener('input', function() {
         getNameStyled()
     });
 
-    document.getElementById('show-more').addEventListener('click', function() {
+    document.getElementById('show-more').addEventListener('click', function() {        
         buildTable(elementFounded)
     });
 
-    function getNameStyled() {        
-
-        elementFounded = false;
+    function getNameStyled() {                
+        elementFounded = null;
         tableElementFound = false;        
         
-        var symbolsOneLetters = table.map(x => x.symbol.toLowerCase()).filter(x => x.length === 1);;
-        var symbolsTwoLetters = table.map(x => x.symbol.toLocaleLowerCase()).filter(x => x.length > 1);
+        let symbolsOneLetters = dataTable.map(x => x.symbol.toLowerCase()).filter(x => x.length === 1);;
+        let symbolsTwoLetters = dataTable.map(x => x.symbol.toLocaleLowerCase()).filter(x => x.length > 1);
         
-        var inputName = document.getElementById('name').value.toLowerCase();        
+        let inputName = document.getElementById('name').value.toLowerCase();        
 
         document.getElementById("name-container").innerHTML = '';
+        document.getElementById('table-element').innerHTML = '';
 
         for (let i = 0; i < inputName.length; i++) {
             if(i < inputName.length -1) {
-                var partName = inputName.charAt(i) + inputName.charAt(i + 1)
-                var containName = symbolsTwoLetters.filter(x => x === partName); 
+                let partName = inputName.charAt(i) + inputName.charAt(i + 1)
+                let containName = symbolsTwoLetters.filter(x => x === partName); 
                 
                 if(containName && containName.length > 0 && !tableElementFound) {
                     createElementWithStyle(inputName.charAt(i) + inputName.charAt(i + 1))                    
                     i++
                     tableElementFound = true;
-                    elementFounded = table.find(x => x.symbol.toLowerCase() === partName.toLowerCase())
+                    elementFounded = dataTable.find(x => x.symbol.toLowerCase() === partName.toLowerCase())
                 } else {
                     createSimpleText(inputName.charAt(i))                    
                 }     
 
 
             } else {                
-                var partName = inputName.charAt(i)
-                var containName = symbolsOneLetters.filter(x => x === partName);                
+                let partName = inputName.charAt(i)
+                let containName = symbolsOneLetters.filter(x => x === partName);                
                 if(containName && containName.length > 0 && !tableElementFound) {                     
                      createElementWithStyle(inputName.charAt(i));
                      tableElementFound = true;
-                     elementFounded = table.find(x => x.symbol.toLowerCase() === partName.toLowerCase())
+                     elementFounded = dataTable.find(x => x.symbol.toLowerCase() === partName.toLowerCase())
                 } else {
                     createSimpleText(inputName.charAt(i));                    
                 }                                
             }                                      
         }
-
-        console.log()
+        
         if(elementFounded) {                
-            var element = document.getElementById('show-more');
+            let element = document.getElementById('show-more');
             element.style.visibility = 'visible';      
             document.getElementById('table-element').style.visibility = 'visible';
         } else {                            
-            var element = document.getElementById('show-more');
+            let element = document.getElementById('show-more');
             element.style.visibility = 'hidden';                            
             document.getElementById('table-element').style.visibility = 'hidden';
-            var table = document.createElement('table');
+            let table = document.createElement('table');
             table.innerHTML = ''
         }                 
     }
 
     function buildTable(data) {                  
-        var tableElement = document.getElementById('table-element');     
+        let tableElement = document.getElementById('table-element');     
         tableElement.innerHTML = '';
 
-        var table = document.createElement('table');
+        let tableHtml = document.createElement('table');
 
-        table.style.color = '#ffffff';
-        table.style.width = '100%';        
-        table.style.height = '100%';
+        tableHtml.style.color = '#ffffff';
+        tableHtml.style.width = '100%';        
+        tableHtml.style.height = '100%';
 
         Object.keys(data).forEach(key => {            
-            var tr = document.createElement('tr');
+            let tr = document.createElement('tr');
             tr.style.textAlign = 'left';
             
-            var td = document.createElement('td').innerHTML = key;
+            let td = document.createElement('td').innerHTML = key;
             td.innerHTML = 'Symbol';            
             tr.append(td)
 
             td =  document.createElement('td');
             td.innerHTML = data[key];
             tr.append(td)
-            table.append(tr)
+            tableHtml.append(tr)
         });           
         
-        tableElement.append(table);
+        tableElement.append(tableHtml);
     }
 
     function createElementWithStyle (text) {        
